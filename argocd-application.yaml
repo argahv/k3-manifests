@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: testproj
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:argahv/k3-manifests.git
+    targetRevision: HEAD
+    path: ./K8s-Manifest/testproj
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: testproj
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+    automated:
+      prune: true
+      selfHeal: true
