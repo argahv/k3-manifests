@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: testproj
-          image: argahv/testproj:main-0671239-1985
+          image: argahv/testproj:main-da3e13d-1985
           imagePullPolicy: Always
           ports:
             - name: http
