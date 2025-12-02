@@ -1,0 +1,72 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: testproj
+  namespace: testproj
+  labels:
+    app: testproj
+  annotations:
+    argocd.argoproj.io/sync-options: SkipPrune=true
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: testproj
+  template:
+    metadata:
+      labels:
+        app: testproj
+    spec:
+      containers:
+        - name: testproj
+          image: argahv/testproj:PLACEHOLDER
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "3000"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+  strategy:
+    canary:
+      canaryService: testproj-preview
+      stableService: testproj-active
+      steps:
+        - setWeight: 20
+        - pause: { duration: 30s }
+        - setWeight: 50
+        - pause: { duration: 30s }
+      maxSurge: 1
+      maxUnavailable: 0
