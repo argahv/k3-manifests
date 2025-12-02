@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: testscript.example.com
+    - host: testscript.zzyra.io # ← Your domain
       http:
         paths:
           - path: /
