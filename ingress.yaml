@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: testproj.example.com
+    - host: testproj.zzyra.io
       http:
         paths:
           - path: /
